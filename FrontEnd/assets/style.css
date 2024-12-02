@@ -88,10 +88,9 @@ nav ul {
 	display: flex;
 	align-items: center;
 	list-style-type: none;
-
+	gap: 44px;
 }
 nav li {
-	padding: 0 10px;
 	font-size: 1.2em;
 }
 
@@ -123,8 +122,46 @@ li:hover {
 }
 #portfolio h2 {
 	text-align: center;
-	margin-bottom: 1em;
+	margin-bottom: 51px;
 }
+
+.filtres {
+    gap: 10px;
+    display: flex;
+    justify-content: center; /* Centre horizontalement */
+	margin: 0 auto 50px auto; /* Centrage horizontal */
+}
+
+.filtres button {
+	width: 100%;
+	height: 37px;
+	border-radius: 60px;
+    border: 1px solid #1D6154; /* Application de la bordure */
+	font-family: 'Syne', sans-serif;  /* Police Syne */
+    font-size: 16px;                  /* Taille de police de 16px */
+    font-weight: 700; 
+	background-color: white;
+	color: #1D6154; 
+}
+
+.filtres button:hover {
+    background-color: #1D6154; /* Fond vert lors du hover */
+    color: white;               /* Texte blanc lors du hover */
+}
+
+.filtres .bouton-tous,
+.filtres .bouton-objets {
+    max-width: 100px;
+}
+
+.filtres .bouton-appartements {
+    max-width: 157px;
+}
+
+.filtres .bouton-hotel-res {
+    max-width: 198px;
+}
+
 .gallery {
 	width: 100%;
 	display: grid;
@@ -186,3 +223,52 @@ footer nav ul {
 	margin: 2em
 }
 
+/* =================================================================*/
+/*===================  PAGE DE CONNEXION ===========================*/
+#login-section {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+	margin: 150px auto 355px auto;
+}
+#login-section h2 {
+	margin-bottom: 37px;
+    font-family: 'Syne', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: #1D6154
+}
+#login-section form {
+	display: flex;
+    flex-direction: column;
+	width: 379px; /* Largeur correspondant à celle des inputs */
+}
+#login-section label {
+	margin-bottom: 6px;
+}
+#login-section .forgot-password {
+	text-decoration: underline;
+	text-align: center;
+}
+#login-section input {
+	width: 379px;
+	height: 50px;
+	font-size: 1.2em;
+	border: none;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	margin-bottom: 30px;
+}
+#login-section button {
+	font-family: 'Syne';
+	font-weight: 700;
+	color: white;
+	background-color: #1D6154;
+	margin : 7px 100px 28px 100px;
+	width: 180px;
+	height: 36px;
+	text-align: center;
+	border-radius: 60px ;
+	border: none;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
+/* =================================================================*/
