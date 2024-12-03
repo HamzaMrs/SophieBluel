@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./assets/style.css">
+    <script src="./assets/login.js" defer></script>
 </head>
 <body>
 <header>
@@ -16,7 +17,7 @@
         <ul>
             <li id="projets">projets</li>
 			<li>contact</li>
-            <li><a href="login.html" class="active">login</a></li>
+            <li id="login"><a href="login.html" class="active">login</a></li>
             <li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
         </ul>
     </nav>
@@ -25,9 +26,9 @@
 <main>
     <section id="login-section">
         <h2>Log In</h2>
-        <form action="#" method="post">
-            <label for="username">Email</label>
-            <input type="text" name="username" id="username" required>
+        <form id="login-form" action="#" method="post">
+            <label for="email">Email</label>
+            <input type="text" name="email" id="email" required>
             
             <label for="password">Mot de passe</label>
             <input type="password" name="password" id="password" required>
