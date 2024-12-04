@@ -48,16 +48,31 @@ table {
 }
 /** end reset css**/
 body {
-	max-width: 1140px;
+	max-width: 1440px;
 	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
 	background-color: #FFFEF8;
 }
+#barre-edition {
+    width: 100%;
+    height: 59px; /* Ajuste la hauteur selon tes préférences */
+    background-color: #000000; /* Couleur noire */
+    color: white; /* Texte en blanc */
+    display: flex; /* Utilise flexbox pour centrer le texte */
+    justify-content: center; /* Centre le texte horizontalement */
+    align-items: center; /* Centre le texte verticalement */
+    font-size: 16px; /* Ajuste la taille du texte selon tes préférences */
+    font-family: 'Work sans'
+}
+#barre-edition i {
+    margin-right: 11.42px; /* Espace de 10px entre l'icône et le texte */
+}
+
 header {
 	display: flex;
 	justify-content: space-between;
-	margin: 50px 0
+	margin: 50px 150px
 }
 section {
 	margin: 50px 0
@@ -103,16 +118,23 @@ nav li img {
 li:hover {
 	color: #B1663C;
 }
+
+main { /* CHANGEMENT*/
+	width: 945px;
+    margin: auto;
+}
+
 #introduction {
 	display: flex;
 	align-items: center;
+	margin-bottom: 139px; /* CHANGEMENT*/
+	margin-top: 139px;
 }
 #introduction figure {
 	flex: 1
 }
 #introduction img {
 	display: block;
-	margin: auto;
 	width: 80%;
 }
 
@@ -127,15 +149,36 @@ li:hover {
 	margin-bottom: 0.5em;
 }
 #portfolio h2 {
-	text-align: center;
+	padding-left: 379px;
+	padding-right: 257px;
 	margin-bottom: 51px;
 }
 
+/* CREATION*/
+#modifier-container {
+	width: 58px;
+	height: 16px;
+	margin-left: 31px;
+	cursor: pointer;
+}
+.modify-text {
+	font-family: Work Sans;
+	font-size: 14px;	
+	color :black;
+}
+.modify-text i {
+	font-size: 15.58px;
+	width: 15.58px;
+	height: 15.58px;
+}
+
+/* =================================================================*/
+/* =======================ZONE DE FILTRES===========================*/
 .filtres {
     gap: 10px;
     display: flex;
     justify-content: center; /* Centre horizontalement */
-	margin: 0 auto 50px auto; /* Centrage horizontal */
+	margin: 0 auto 0 auto; /* Centrage horizontal */
 }
 
 .filtres button {
@@ -148,11 +191,17 @@ li:hover {
     font-weight: 700; 
 	background-color: white;
 	color: #1D6154; 
+	cursor: pointer;
 }
 
 .filtres button:hover {
     background-color: #1D6154; /* Fond vert lors du hover */
     color: white;               /* Texte blanc lors du hover */
+}
+
+.filtres button.active {
+    background-color: #1D6154; 
+    color: white;               
 }
 
 .filtres .bouton-tous,
@@ -167,6 +216,7 @@ li:hover {
 .filtres .bouton-hotel-res {
     max-width: 198px;
 }
+/* =================================================================*/
 
 .gallery {
 	width: 100%;
@@ -174,6 +224,7 @@ li:hover {
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-column-gap: 20px;
 	grid-row-gap: 20px;
+	padding-top: 50px;
 }
 
 .gallery img {
@@ -289,4 +340,5 @@ nav a.active {
 #logout {
 	color: black;
     text-decoration: none;
+	font-weight: 400;
 }

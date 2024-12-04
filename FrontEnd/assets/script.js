@@ -10,6 +10,15 @@ async function getCat() {
     return data
 }
 
+function checkID() {
+    const userEmail = window.localStorage.getItem("email");
+    if (!userEmail) {
+        console.log("Aucun utilisateur connecté");
+        return false;
+    }
+    console.log("Email dans localStorage:", userEmail);
+    return userEmail === "sophie.bluel@test.tld";
+}
 
 function genererPortfolio(Works){
     const galleryElement = document.querySelector(".gallery");
@@ -28,13 +37,35 @@ function genererPortfolio(Works){
         
         figureElem.appendChild(imageElem);
         figureElem.appendChild(figcaptionElem);
-        
+
+        if (checkID()) {
+            // Créez l'élément de la barre d'édition
+            const barreEdition = document.createElement("div");
+            if (!document.getElementById("barre-edition")) {
+                barreEdition.id = "barre-edition";
+                barreEdition.innerHTML = '<i class="fa-regular fa-pen-to-square"></i>   Mode édition';
+                document.body.insertBefore(barreEdition, document.body.firstChild); 
+            }        
+            // Vérifie si le bouton "Modifier" existe déjà
+            const modifierContainer = document.getElementById("modifier-container");
+            if (!modifierContainer.querySelector(".modify-text")) {
+                const modifier = document.createElement("span");
+                modifier.classList.add("modify-text");
+                modifier.innerHTML = '<i class="fa-regular fa-pen-to-square"></i> modifier';
+                modifier.addEventListener("click", () => openModal(work)); // Ouvre le modal pour ce projet
+                modifierContainer.appendChild(modifier);
+            }  
+        }
         galleryElement.appendChild(figureElem);
     }
 }
 
 
 function ajouterFiltres() {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (isLoggedIn) {
+        return; // Si l'utilisateur est connecté, ne pas afficher les filtres
+    }
     const sectionPortfolio = document.getElementById("portfolio");
     const zoneFiltres = document.createElement("div");
     zoneFiltres.classList.add("filtres");
@@ -59,6 +90,9 @@ function ajouterFiltres() {
                 filteredWorks = works.filter(work => work.categoryId === id);
             }
             genererPortfolio(filteredWorks);
+            const allButtons = document.querySelectorAll(".filtres button");
+            allButtons.forEach(btn => btn.classList.remove("active")); // Retire la classe des autres boutons
+            bouton.classList.add("active"); // Ajoute la classe au bouton cliqué
         });
         zoneFiltres.appendChild(bouton);
     });
@@ -75,6 +109,3 @@ init();
 document.getElementById("login").addEventListener("click", function() {
     window.open("login.html", "_blank");
 });
-
-
-
