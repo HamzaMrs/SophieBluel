@@ -19,6 +19,7 @@ async function connexion(event) {
     const data = await response.json();
     window.localStorage.setItem("authToken", data.token);
 
+    window.localStorage.setItem("authToken", data.token); // Stock le token
     window.localStorage.setItem("email", email);
     window.localStorage.setItem("password", password);
     alert("Connexion réussie !");

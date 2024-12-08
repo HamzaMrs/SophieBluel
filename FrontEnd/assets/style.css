@@ -120,7 +120,7 @@ li:hover {
 }
 
 main { /* CHANGEMENT*/
-	width: 945px;
+	max-width: 945px;
     margin: auto;
 }
 
@@ -342,3 +342,229 @@ nav a.active {
     text-decoration: none;
 	font-weight: 400;
 }
+
+/* =================================================================*/
+/*===================  PAGE DE CONNEXION ===========================*/
+.modal {
+    display: none; /* Le modal est caché par défaut */
+    position: fixed; /* Le modal reste à l'écran même quand on défile */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond sombre avec opacité */
+    z-index: 1000; /* S'assure que le modal est au-dessus du contenu */
+}
+
+/* Contenu du modal */
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centrage du modal */
+    background-color: white;
+    border-radius: 10px;
+    width: 630px;
+	height: 688px;
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.modal-content h2 {
+	color: #000000;
+    font-family: Work Sans;
+	font-size: 26px;
+	font-weight: 400;
+	line-height: 30.5px;
+	margin-top: 60px;
+	margin-bottom: 46px;
+}
+/* Le bouton de fermeture */
+.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 30px;
+    color: black;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    text-decoration: none;
+}
+
+/* Grille pour afficher les images */
+.modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 images par ligne */
+    column-gap: 9px; 
+	row-gap: 29px;
+    justify-items: center;
+	width: 420px;
+	height: 433px;
+	border-bottom: 1px solid #B3B3B3;
+}
+.modal-gallery img {
+    width: 76.61px;
+	height: 102.57px;
+    object-fit: cover; 
+}
+.modal-gallery .zoneImg {
+	position: relative;
+    width: 76.86px;
+	height: 102.57px;
+}
+
+.zoneImg .delete-btn{
+	position: absolute;
+    top: 6px; 
+    right: 5px; 
+    width: 17px; 
+    height: 17px; 
+    font-size: 17px;
+	background-color: #000000;
+	color: white;
+	border-radius: 2px;
+	display: flex;
+    justify-content: center; 
+    align-items: center; 
+    cursor: pointer; 
+}
+.delete-btn i {
+    font-size: 10px; 
+    vertical-align: middle; 
+}
+
+.add-btn {
+	margin-top: 38px;
+	width: 237px;
+	height: 36px;
+	border-radius: 60px;
+	background-color: #1D6154;
+	color: white;
+	font-family: 'Syne';
+	border: #1D6154;
+	cursor: pointer;
+}
+
+.addPhotoPage {
+	display: flex;
+    flex-direction: column;
+    position: fixed; /* Le modal reste à l'écran même quand on défile */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond sombre avec opacité */
+    z-index: 1000; /* S'assure que le modal est au-dessus du contenu */
+}
+.addPhotoContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centrage du modal */
+    background-color: white;
+    border-radius: 10px;
+    width: 630px;
+	height: 688px;
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 30px;
+    color: black;
+    cursor: pointer;
+}
+.back-btn {
+    position: absolute;
+    top: 27px; /* Distance du haut */
+    left: 30px; /* Distance de la gauche */
+    font-size: 21px; /* Taille de la flèche */
+    cursor: pointer;
+    color: #000; /* Couleur du texte */
+    font-family: 'Arial', sans-serif; /* Police */
+}
+.add-photo-content h2 {
+	color: #000000;
+    font-family: Work Sans;
+	font-size: 26px;
+	font-weight: 400;
+	line-height: 30.5px;
+	margin-top: 60px;
+	margin-bottom: 46px;
+}
+.zone-ajout {
+	display: grid;
+    justify-items: center;
+	width: 420px;
+	height: 421px;
+	border-bottom: 1px solid #B3B3B3;
+}
+.add-photo-zone {
+	width: 100%;
+	height: 169px;
+	background-color: #E8F1F6;
+	border-radius: 3px;
+	display: flex;
+	flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+	margin-bottom: 30px;
+}
+.photo-icon{
+	color: #B9C5CC;
+	font-size: 70px;
+	margin-bottom: 10px;
+}
+.add-photo-btn {
+	width: 173px;
+	height: 36px;	
+	border-radius: 50px;
+	background-color: #CBD6DC;
+	font-family: Work Sans;
+	color: #306685;
+	border: #CBD6DC;
+	cursor: pointer;
+	margin-bottom: 7px;
+}
+.info-text {
+	font-size: 10px;
+	color: #444444;
+	font-weight: 400;
+}
+.add-title-cat {
+	height: 222px;
+	width: 100%;
+}
+.add-title-cat label {
+    margin-bottom: 10px; /* Espace entre le label et le champ */
+    display: block; /* Assure que le label prend toute la largeur pour bien s'aligner */
+}
+.add-title-cat input,select {
+	width: 420px;
+	height: 50px;
+	font-size: 1.2em;
+	border: none;
+	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	margin-bottom: 30px;
+}
+.val-btn {
+	margin-top: 38px;
+	width: 237px;
+	height: 36px;
+	border-radius: 60px;
+	background-color: #A7A7A7;
+	color: white;
+	font-family: 'Syne';
+	border: #A7A7A7;
+	cursor: pointer;
+}
+
+/* =================================================================*/
