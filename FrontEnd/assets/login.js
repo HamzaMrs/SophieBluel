@@ -22,7 +22,7 @@ async function connexion(event) {
     window.localStorage.setItem("authToken", data.token); // Stock le token
     window.localStorage.setItem("email", email);
     window.localStorage.setItem("password", password);
-    alert("Connexion réussie !");
+    // On est connecté
     window.localStorage.setItem("isLoggedIn", "true");
     window.location.href = "index.html"; 
 }
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loginElement.innerHTML = `<a href="#" id="logout">logout</a>`;
         // Ajoute un événement de déconnexion
         document.getElementById("logout").addEventListener("click", function () {
-            alert("Vous êtes déconnecté.");
+            // On est deconnecté
             localStorage.removeItem("authToken"); 
             localStorage.removeItem("email");       
             localStorage.removeItem("password"); 

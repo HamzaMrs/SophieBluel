@@ -1,9 +1,11 @@
+// RECUPERATION DES TRAVAUX
 async function getWorks() {
     const response = await fetch("http://localhost:5678/api/works")
-    const data = await response.json()
+    const data = await response.json();
+    console.log(data);
     return data
 }
-
+// RECUPERATION DES CATEGORIES
 async function getCat() {
     const response = await fetch("http://localhost:5678/api/categories")
     const data = await response.json()
@@ -23,7 +25,7 @@ function checkID() {
 
 function genererPortfolio(Works) {
     const galleryElement = document.querySelector(".gallery");
-    galleryElement.innerHTML = "";
+    galleryElement.innerHTML = ""; // On vide tout
 
     for (let i = 0; i < Works.length; i++) {
         const work = Works[i];
@@ -232,12 +234,32 @@ function createModal(works) {
     addTitleCat.setAttribute("method", "post");
     zoneAjout.appendChild(addTitleCat);
 
+   
+    // Affiche la photo dans la zone d'ajout au moment de la sélection de la photo
+    fileInput.addEventListener("change", function () {
+        event.preventDefault();
+        const file = fileInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                addPhotoZone.style.backgroundImage = `url(${e.target.result})`;
+                addPhotoZone.style.backgroundColor = "#E8F1F6";
+                // On cache les élements qui sont à l'interieur de la zone d'ajout (l'icon,le bouton et le texte)
+                if (photoIcon) photoIcon.style.display = "none";
+                if (addPhotoButton) addPhotoButton.style.display = "none";
+                if (infoText) infoText.style.display = "none";
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+
     // Ajouter le champ "Titre"
     const titleLabel = document.createElement("label");
     titleLabel.setAttribute("for", "title");
     titleLabel.textContent = "Titre";
     addTitleCat.appendChild(titleLabel);
-
+    // Ajouter le champ de saisie pour "Titre"
     const titleInput = document.createElement("input");
     titleInput.setAttribute("type", "text");
     titleInput.setAttribute("name", "title");
@@ -249,12 +271,12 @@ function createModal(works) {
     categoryLabel.setAttribute("for", "category");
     categoryLabel.textContent = "Catégories";
     addTitleCat.appendChild(categoryLabel);
-
+    // Ajouter le champ de selection pour "Categories"
     const categorySelect = document.createElement("select");
     categorySelect.setAttribute("name", "category");
     categorySelect.setAttribute("id", "category");
     addTitleCat.appendChild(categorySelect);
-    // Recupération de l'API
+    // Recupération de l'API pour les categories
     categorySelect.innerHTML = "";
     getCat().then(categories => {
         categories.forEach(category => {
@@ -272,11 +294,11 @@ function createModal(works) {
     validButton.classList.add("val-btn");
     validButton.textContent = "Valider";
     addPhotoContent.appendChild(validButton);
-    
+
     // Ajouter un bouton "Retour" avec une flèche gauche
     const backButton = document.createElement("span");
     backButton.classList.add("back-btn");
-    backButton.innerHTML = "&#8592;"; // Code HTML pour une flèche gauche
+    backButton.innerHTML = '<i class="fa-solid fa-arrow-left"></i>'; // Code HTML pour une flèche gauche
     backButton.addEventListener("click", () => {
         addPhotoPage.style.display = "none"; // Cache la page d'ajout de photo
         gallery.style.display = "grid";
@@ -337,7 +359,7 @@ async function deleteWorks(event) {
         if (!response.ok) {
             const errorData = await response.json();
             console.error("Erreur lors de la suppression :", errorData);
-            alert("Impossible de supprimer l'élément. Vérifiez vos droits ou réessayez.");
+            alert("Impossible de supprimer.");
             return;
         }
         // Mise à jour locale en cas de succès
@@ -360,27 +382,49 @@ console.log("Token actuel dans localStorage :", window.localStorage.getItem("aut
 // Fonction pour envoyer le fichier
 async function addWorks(event) {
     const token = localStorage.getItem("authToken");
-    if (!token) return alert("Token introuvable. Connectez-vous.");
-    const selectedFile = event.target.files[0];
-    if (!selectedFile) return alert("Veuillez sélectionner un fichier.");
+    const btn = document.querySelector(".val-btn");
+    const selectedFile = event.target.files[0]; // Stocke la valeur dès le début
+    let isValid = false; // Variable pour sortir de la boucle
 
-    const formData = new FormData();
-    formData.append("image", selectedFile);
-    formData.append("title", selectedFile.name);
-    formData.append("category", 1);
+    while (!isValid) {
+        // Reprend les valeurs dynamiques à chaque itération
+        const title = document.getElementById("title").value;
+        const category = document.getElementById("category").value;
 
-    const response = await fetch("http://localhost:5678/api/works", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-    });
+        if (selectedFile && title && category) {
+            btn.disabled = false;
+            btn.classList.add("enabled");
+            isValid = true; // Sort de la boucle
+        } else {
+            btn.disabled = true;
+            btn.classList.remove("enabled");
+        }
 
-    if (response.ok) {
-        alert("Élément ajouté avec succès !");
-    } else {
-        alert("Erreur dans la connexion API.");
+        // Pause de 100ms pour éviter un blocage complet
+        await new Promise(resolve => setTimeout(resolve, 100));
     }
-}
 
+    btn.addEventListener("click", async () => {
+        if (!token) return alert("Token introuvable. Connectez-vous.");
+        if (!selectedFile) return alert("Veuillez sélectionner un fichier."); // Sécurité supplémentaire
+        const title = document.getElementById("title").value;
+        const category = document.getElementById("category").value;
+
+        if (!title) return alert("Veuillez renseigner un titre.");
+        if (!category) return alert("Veuillez sélectionner une catégorie.");
+
+        const formData = new FormData();
+        formData.append("image", selectedFile);
+        formData.append("title", title); // Utilisation du titre saisi
+        formData.append("category", category);
+
+        const response = await fetch("http://localhost:5678/api/works", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
+        });
+
+    });
+}
 
 
