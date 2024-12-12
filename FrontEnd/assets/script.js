@@ -1,3 +1,4 @@
+//////////////////////////////////////////////// RECUPERATION DEPUIS L'API ///////////////////////////////////////////////////////////
 // RECUPERATION DES TRAVAUX
 async function getWorks() {
     const response = await fetch("http://localhost:5678/api/works")
@@ -11,7 +12,7 @@ async function getCat() {
     const data = await response.json()
     return data
 }
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // VERIFICATION DE LA PERSONNE CONNECTÉE
 function checkID() {
     const userEmail = window.localStorage.getItem("email");
@@ -22,7 +23,7 @@ function checkID() {
     console.log("Email dans localStorage:", userEmail);
     return userEmail === "sophie.bluel@test.tld";
 }
-
+//////////////////////////////////////////////// AFFICHAGE DES IMAGES DANS LE PORTFOLIO /////////////////////////////////////////////////
 function genererPortfolio(Works) {
     const galleryElement = document.querySelector(".gallery");
     galleryElement.innerHTML = ""; // On vide tout
@@ -55,7 +56,7 @@ function genererPortfolio(Works) {
                 const modifier = document.createElement("span");
                 modifier.classList.add("modify-text");
                 modifier.innerHTML = '<i class="fa-regular fa-pen-to-square"></i> modifier';
-                modifier.addEventListener("click", () => createModal(Works)); // Ouvre le modal pour ce projet
+                modifier.addEventListener("click", () => createModal(Works)); // Ouvre le modal dès qu'on clique desssus
                 modifierContainer.appendChild(modifier);
             }
         }
@@ -63,7 +64,7 @@ function genererPortfolio(Works) {
     }
 }
 
-
+//////////////////////////////////////////////// AJOUT DES FILTRES ///////////////////////////////////////////////////////////
 function ajouterFiltres() {
     const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
     if (isLoggedIn) {
@@ -101,7 +102,7 @@ function ajouterFiltres() {
     });
     sectionPortfolio.insertBefore(zoneFiltres, sectionPortfolio.querySelector(".gallery"));
 }
-
+///////////// APPEL DES FONCTIONS POUR LA PAGE D'ACCEUIL ///////////////
 let works = [];
 async function init() {
     works = await getWorks(); // Attends que getWorks récupère les données
@@ -109,7 +110,7 @@ async function init() {
     ajouterFiltres()
 }
 init();
-
+///////////// REDIRECTION VERS LA PAGE DE LOGIN ///////////////////////
 document.getElementById("login").addEventListener("click", function () {
     window.open("login.html", "_blank");
 });
@@ -158,7 +159,7 @@ function createModal(works) {
         zoneImg.appendChild(deleteBtn);
 
         // Ajoutez l'événement de suppression
-        deleteBtn.addEventListener("click", deleteWorks);
+        deleteBtn.addEventListener("click", deleteWorks)
 
         gallery.appendChild(zoneImg);
     });
@@ -290,7 +291,7 @@ function createModal(works) {
 
     // Ajouter le bouton "Valider"
     const validButton = document.createElement("button");
-    validButton.type = "submit";
+    validButton.type = "button";
     validButton.classList.add("val-btn");
     validButton.textContent = "Valider";
     addPhotoContent.appendChild(validButton);
@@ -379,7 +380,7 @@ async function deleteWorks(event) {
 
 
 console.log("Token actuel dans localStorage :", window.localStorage.getItem("authToken"));
-// Fonction pour envoyer le fichier
+////////////////////////////////////////////////FONCTION D'AJOUT DANS MODAL ////////////////////////////////////////////////////////
 async function addWorks(event) {
     const token = localStorage.getItem("authToken");
     const btn = document.querySelector(".val-btn");
@@ -404,7 +405,8 @@ async function addWorks(event) {
         await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("click", async function (event) {
+        event.preventDefault();
         if (!token) return alert("Token introuvable. Connectez-vous.");
         if (!selectedFile) return alert("Veuillez sélectionner un fichier."); // Sécurité supplémentaire
         const title = document.getElementById("title").value;
