@@ -371,6 +371,8 @@ async function deleteWorks(event) {
         zone.remove(); // Supprime visuellement dans le modal
         genererPortfolio(works); // Regénère le portfolio
         console.log(`Élément avec l'ID ${id} supprimé avec succès.`);
+        const modal = document.querySelector(".modal"); 
+        if (modal) {modal.remove();}
     } catch (error) {
         console.error("Erreur lors de la suppression :", error);
         alert("Une erreur s'est produite. Veuillez réessayer.");
@@ -378,8 +380,6 @@ async function deleteWorks(event) {
 }
 
 
-
-console.log("Token actuel dans localStorage :", window.localStorage.getItem("authToken"));
 ////////////////////////////////////////////////FONCTION D'AJOUT DANS MODAL ////////////////////////////////////////////////////////
 async function addWorks(event) {
     const token = localStorage.getItem("authToken");
@@ -400,7 +400,6 @@ async function addWorks(event) {
             btn.disabled = true;
             btn.classList.remove("enabled");
         }
-
         // Pause de 100ms pour éviter un blocage complet
         await new Promise(resolve => setTimeout(resolve, 100));
     }
@@ -425,7 +424,17 @@ async function addWorks(event) {
             headers: { Authorization: `Bearer ${token}` },
             body: formData,
         });
-
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert(`Erreur : ${errorData.message || "Impossible d'ajouter le travail."}`);
+            return;
+        }
+        const newWork = await response.json();
+        works.push(newWork);
+        genererPortfolio(works);
+        // Fermer le modal
+        const modal = document.querySelector(".modal");
+        if (modal) {modal.remove();}
     });
 }
 
