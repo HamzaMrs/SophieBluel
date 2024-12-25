@@ -1,54 +1,65 @@
 async function connexion(event) {
     event.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
     const emailRegex = /^[a-z0-9._-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+    // Vérification du format de l'email
     if (!emailRegex.test(email)) {
         alert("Veuillez entrer une adresse email valide.");
         return;
     }
-    const body = JSON.stringify({
-        email: email,
-        password: password
-    });
-    const response = await fetch("http://localhost:5678/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: body
-    })
-    const data = await response.json();
-    window.localStorage.setItem("authToken", data.token);
-
-    window.localStorage.setItem("authToken", data.token); // Stock le token
-    window.localStorage.setItem("email", email);
-    window.localStorage.setItem("password", password);
-    // On est connecté
-    window.localStorage.setItem("isLoggedIn", "true");
-    window.location.href = "index.html"; 
+    // Vérification des identifiants spécifiques
+    if (email !== "sophie.bluel@test.tld" || password !== "S0phie") {
+        alert("Identifiant ou mot de passe incorrect.");
+        return;
+    }
+    const body = JSON.stringify({ email, password });
+    try {
+        const response = await fetch("http://localhost:5678/api/users/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: body
+        });
+        // Vérifie si la réponse est une erreur
+        if (!response.ok) {
+            throw new Error("Erreur de connexion, veuillez vérifier vos identifiants.");
+        }
+        const data = await response.json();
+        // Stockage sécurisé dans le localStorage (pas de mot de passe ni d'email)
+        window.localStorage.setItem("token", data.token);
+        // Redirection vers la page d'accueil
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Erreur lors de la connexion :", error);
+        alert("Une erreur est survenue. Veuillez réessayer.");
+    }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const loginElement = document.getElementById('login');
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (isLoggedIn) {
-        // Si l'utilisateur est connecté, remplace "login" par "logout"
+document.addEventListener("DOMContentLoaded", function () {
+    const loginElement = document.getElementById("login");
+    const token = localStorage.getItem("token");
+    // Sur la page de connexion
+    if (window.location.pathname === "/login.html") {
+        loginElement.innerHTML = `<a href="login.html" class="active">login</a>`; // "login" est actif ici
+    }
+    if (token) {
+        // Si connecté (présence du token), remplace "login" par "logout"
         loginElement.innerHTML = `<a href="#" id="logout">logout</a>`;
-        // Ajoute un événement de déconnexion
         document.getElementById("logout").addEventListener("click", function () {
-            // On est deconnecté
-            localStorage.removeItem("authToken"); 
-            localStorage.removeItem("email");       
-            localStorage.removeItem("password"); 
-            localStorage.removeItem("isLoggedIn"); 
+            // Déconnexion
+            localStorage.removeItem("token");
             loginElement.innerHTML = `<a href="login.html" class="active">login</a>`;
             window.location.reload();
         });
-    }else {
-        // Si l'utilisateur n'est pas connecté, affiche le lien de login
-        loginElement.innerHTML = `<a href="login.html" class="active">login</a>`;
+    } else {
+        // Si non connecté, affiche "login" sur la page d'accueil sans "active"
+        if (window.location.pathname !== "/login.html") {
+            loginElement.innerHTML = `<a href="login.html">login</a>`;
+        }
     }
-    const loginForm = document.getElementById('login-form');
+    const loginForm = document.getElementById("login-form");
     if (loginForm) {
-      loginForm.addEventListener('submit', connexion);
+        loginForm.addEventListener("submit", connexion);
     }
 });
+

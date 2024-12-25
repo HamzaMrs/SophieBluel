@@ -182,7 +182,7 @@ main { /* CHANGEMENT*/
 }
 
 .filtres button {
-	width: 100%;
+	min-width: 100px;
 	height: 37px;
 	border-radius: 60px;
     border: 1px solid #1D6154; /* Application de la bordure */
@@ -192,6 +192,7 @@ main { /* CHANGEMENT*/
 	background-color: white;
 	color: #1D6154; 
 	cursor: pointer;
+	padding: 7px 10px 15px 15px;
 }
 
 .filtres button:hover {
@@ -204,18 +205,6 @@ main { /* CHANGEMENT*/
     color: white;               
 }
 
-.filtres .bouton-tous,
-.filtres .bouton-objets {
-    max-width: 100px;
-}
-
-.filtres .bouton-appartements {
-    max-width: 157px;
-}
-
-.filtres .bouton-hotel-res {
-    max-width: 198px;
-}
 /* =================================================================*/
 
 .gallery {
@@ -283,6 +272,10 @@ footer nav ul {
 /* =================================================================*/
 /*===================  PAGE DE CONNEXION ===========================*/
 nav a.active {
+	color: black;  
+    text-decoration: none;
+}
+#login a{
 	color: black;  
     text-decoration: none;
 }

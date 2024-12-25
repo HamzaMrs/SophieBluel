@@ -3,28 +3,18 @@
 async function getWorks() {
     const response = await fetch("http://localhost:5678/api/works")
     const data = await response.json();
-    console.log(data);
     return data
 }
 // RECUPERATION DES CATEGORIES
-async function getCat() {
+async function getCategories() {
     const response = await fetch("http://localhost:5678/api/categories")
     const data = await response.json()
     return data
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// VERIFICATION DE LA PERSONNE CONNECTÉE
-function checkID() {
-    const userEmail = window.localStorage.getItem("email");
-    if (!userEmail) {
-        console.log("Aucun utilisateur connecté");
-        return false;
-    }
-    console.log("Email dans localStorage:", userEmail);
-    return userEmail === "sophie.bluel@test.tld";
-}
 //////////////////////////////////////////////// AFFICHAGE DES IMAGES DANS LE PORTFOLIO /////////////////////////////////////////////////
 function genererPortfolio(Works) {
+    const token = localStorage.getItem("token");
     const galleryElement = document.querySelector(".gallery");
     galleryElement.innerHTML = ""; // On vide tout
 
@@ -42,7 +32,7 @@ function genererPortfolio(Works) {
         figureElem.appendChild(imageElem);
         figureElem.appendChild(figcaptionElem);
 
-        if (checkID()) {
+        if (token) {
             // Creation l'élément de la barre d'édition
             const barreEdition = document.createElement("div");
             if (!document.getElementById("barre-edition")) {
@@ -65,51 +55,68 @@ function genererPortfolio(Works) {
 }
 
 //////////////////////////////////////////////// AJOUT DES FILTRES ///////////////////////////////////////////////////////////
-function ajouterFiltres() {
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (isLoggedIn) {
+async function ajouterFiltres() {
+    const token = localStorage.getItem("token");
+    if (token) {
         return; // Si l'utilisateur est connecté, ne pas afficher les filtres
     }
     const sectionPortfolio = document.getElementById("portfolio");
     const zoneFiltres = document.createElement("div");
     zoneFiltres.classList.add("filtres");
-
-    const boutons = [
-        { nom: "Tous", classe: "bouton-tous", id: 0 },
-        { nom: "Objets", classe: "bouton-objets", id: 1 },
-        { nom: "Appartements", classe: "bouton-appartements", id: 2 },
-        { nom: "Hôtel & restaurants", classe: "bouton-hotel-res", id: 3 }
-    ];
-    // Créer les boutons et ajouter leur classe spécifique
-    boutons.forEach(({ nom, classe, id }) => {
-        const bouton = document.createElement("button");
-        bouton.innerText = nom;
-        bouton.classList.add(classe); // Ajoute la classe unique pour chaque bouton
-        bouton.addEventListener("click", async () => {
-            const works = await getWorks();
-            let filteredWorks;
-            if (id === 0) {
-                filteredWorks = works;
-            } else {
-                filteredWorks = works.filter(work => work.categoryId === id);
+    try {
+        // Récupérer les catégories depuis l'API
+        const categories = await getCategories();
+        // Ajouter une catégorie "Tous" manuellement
+        const boutons = [
+            { id: 0, name: "Tous", classe: "bouton-tous", active: true }, // Ajoute la propriété active ici
+            ...categories.map(cat => ({
+                id: cat.id,
+                name: cat.name,
+                classe: `bouton-${cat.name.toLowerCase().replace(/ /g, "-")}`,
+                active: false // Par défaut, les autres boutons ne sont pas actifs
+            }))
+        ];
+        // Créer les boutons dynamiquement
+        boutons.forEach(({ id, name, classe, active }) => {
+            const bouton = document.createElement("button");
+            bouton.innerText = name;
+            bouton.classList.add(classe); // Ajoute la classe spécifique
+            if (active) {
+                bouton.classList.add("active"); // Ajoute la classe active au bouton "Tous"
             }
-            genererPortfolio(filteredWorks);
-            const allButtons = document.querySelectorAll(".filtres button");
-            allButtons.forEach(btn => btn.classList.remove("active")); // Retire la classe des autres boutons
-            bouton.classList.add("active"); // Ajoute la classe au bouton cliqué
+            bouton.addEventListener("click", async () => {
+                const works = await getWorks();
+                let filteredWorks;
+                if (id === 0) {
+                    filteredWorks = works; // Afficher tous les travaux
+                } else {
+                    filteredWorks = works.filter(work => work.categoryId === id);
+                }
+                genererPortfolio(filteredWorks);
+                // Retirer la classe active de tous les boutons
+                const allButtons = document.querySelectorAll(".filtres button");
+                allButtons.forEach(btn => btn.classList.remove("active"));
+                // Ajouter la classe active au bouton cliqué
+                bouton.classList.add("active");
+            });
+
+            zoneFiltres.appendChild(bouton);
         });
-        zoneFiltres.appendChild(bouton);
-    });
-    sectionPortfolio.insertBefore(zoneFiltres, sectionPortfolio.querySelector(".gallery"));
+
+        sectionPortfolio.insertBefore(zoneFiltres, sectionPortfolio.querySelector(".gallery"));
+    } catch (error) {
+        console.error("Erreur lors de la récupération des catégories :", error);
+    }
 }
+
 ///////////// APPEL DES FONCTIONS POUR LA PAGE D'ACCEUIL ///////////////
-let works = [];
 async function init() {
-    works = await getWorks(); // Attends que getWorks récupère les données
+    const works = await getWorks(); // Déclare et assigne works ici
     genererPortfolio(works); // Passe les données à genererPortfolio
-    ajouterFiltres()
+    ajouterFiltres();
 }
 init();
+
 ///////////// REDIRECTION VERS LA PAGE DE LOGIN ///////////////////////
 document.getElementById("login").addEventListener("click", function () {
     window.open("login.html", "_blank");
@@ -279,7 +286,7 @@ function createModal(works) {
     addTitleCat.appendChild(categorySelect);
     // Recupération de l'API pour les categories
     categorySelect.innerHTML = "";
-    getCat().then(categories => {
+    getCategories().then(categories => {
         categories.forEach(category => {
             const option = document.createElement("option");
             option.value = category.id;
@@ -337,12 +344,13 @@ function createModal(works) {
 ////////////////////////////////////////////////FONCTION DE SUPPRESSION DANS MODAL ////////////////////////////////////////////////////
 async function deleteWorks(event) {
     try {
+        const works = await getWorks();
         const zone = event.target.closest(".zoneImg"); // Trouve le conteneur de l'image à supprimer
         if (!zone) return;
         // Trouve l'ID de l'œuvre depuis le dataset
         const id = zone.dataset.id;
         // Vérifiez que le token est disponible
-        const token = localStorage.getItem("authToken");
+        const token = localStorage.getItem("token");
         if (!token) {
             console.error("Token manquant. Connectez-vous pour continuer.");
             alert("Veuillez vous reconnecter.");
@@ -370,7 +378,6 @@ async function deleteWorks(event) {
         }
         zone.remove(); // Supprime visuellement dans le modal
         genererPortfolio(works); // Regénère le portfolio
-        console.log(`Élément avec l'ID ${id} supprimé avec succès.`);
         const modal = document.querySelector(".modal"); 
         if (modal) {modal.remove();}
     } catch (error) {
@@ -382,7 +389,8 @@ async function deleteWorks(event) {
 
 ////////////////////////////////////////////////FONCTION D'AJOUT DANS MODAL ////////////////////////////////////////////////////////
 async function addWorks(event) {
-    const token = localStorage.getItem("authToken");
+    const works = await getWorks();
+    const token = localStorage.getItem("token");
     const btn = document.querySelector(".val-btn");
     const selectedFile = event.target.files[0]; // Stocke la valeur dès le début
     let isValid = false; // Variable pour sortir de la boucle
@@ -406,6 +414,7 @@ async function addWorks(event) {
 
     btn.addEventListener("click", async function (event) {
         event.preventDefault();
+        const token = localStorage.getItem("token");
         if (!token) return alert("Token introuvable. Connectez-vous.");
         if (!selectedFile) return alert("Veuillez sélectionner un fichier."); // Sécurité supplémentaire
         const title = document.getElementById("title").value;
