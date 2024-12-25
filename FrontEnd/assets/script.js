@@ -389,62 +389,77 @@ async function deleteWorks(event) {
 
 ////////////////////////////////////////////////FONCTION D'AJOUT DANS MODAL ////////////////////////////////////////////////////////
 async function addWorks(event) {
-    const works = await getWorks();
-    const token = localStorage.getItem("token");
-    const btn = document.querySelector(".val-btn");
-    const selectedFile = event.target.files[0]; // Stocke la valeur dès le début
-    let isValid = false; // Variable pour sortir de la boucle
-
-    while (!isValid) {
-        // Reprend les valeurs dynamiques à chaque itération
-        const title = document.getElementById("title").value;
-        const category = document.getElementById("category").value;
-
-        if (selectedFile && title && category) {
-            btn.disabled = false;
-            btn.classList.add("enabled");
-            isValid = true; // Sort de la boucle
-        } else {
-            btn.disabled = true;
-            btn.classList.remove("enabled");
-        }
-        // Pause de 100ms pour éviter un blocage complet
-        await new Promise(resolve => setTimeout(resolve, 100));
-    }
-
-    btn.addEventListener("click", async function (event) {
-        event.preventDefault();
+    try {
+        const works = await getWorks();
         const token = localStorage.getItem("token");
-        if (!token) return alert("Token introuvable. Connectez-vous.");
-        if (!selectedFile) return alert("Veuillez sélectionner un fichier."); // Sécurité supplémentaire
-        const title = document.getElementById("title").value;
-        const category = document.getElementById("category").value;
+        const btn = document.querySelector(".val-btn");
+        const selectedFile = event.target.files[0]; // Stocke la valeur dès le début
+        let isValid = false; // Variable pour sortir de la boucle
 
-        if (!title) return alert("Veuillez renseigner un titre.");
-        if (!category) return alert("Veuillez sélectionner une catégorie.");
+        while (!isValid) {
+            // Reprend les valeurs dynamiques à chaque itération
+            const title = document.getElementById("title").value;
+            const category = document.getElementById("category").value;
 
-        const formData = new FormData();
-        formData.append("image", selectedFile);
-        formData.append("title", title); // Utilisation du titre saisi
-        formData.append("category", category);
-
-        const response = await fetch("http://localhost:5678/api/works", {
-            method: "POST",
-            headers: { Authorization: `Bearer ${token}` },
-            body: formData,
-        });
-        if (!response.ok) {
-            const errorData = await response.json();
-            alert(`Erreur : ${errorData.message || "Impossible d'ajouter le travail."}`);
-            return;
+            if (selectedFile && title && category) {
+                btn.disabled = false;
+                btn.classList.add("enabled");
+                isValid = true; // Sort de la boucle
+            } else {
+                btn.disabled = true;
+                btn.classList.remove("enabled");
+            }
+            // Pause de 100ms pour éviter un blocage complet
+            await new Promise(resolve => setTimeout(resolve, 100));
         }
-        const newWork = await response.json();
-        works.push(newWork);
-        genererPortfolio(works);
-        // Fermer le modal
-        const modal = document.querySelector(".modal");
-        if (modal) {modal.remove();}
-    });
+
+        btn.addEventListener("click", async function (event) {
+            event.preventDefault();
+
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) return alert("Token introuvable. Connectez-vous.");
+                if (!selectedFile) return alert("Veuillez sélectionner un fichier."); // Sécurité supplémentaire
+
+                const title = document.getElementById("title").value;
+                const category = document.getElementById("category").value;
+
+                if (!title) return alert("Veuillez renseigner un titre.");
+                if (!category) return alert("Veuillez sélectionner une catégorie.");
+
+                const formData = new FormData();
+                formData.append("image", selectedFile);
+                formData.append("title", title); // Utilisation du titre saisi
+                formData.append("category", category);
+
+                const response = await fetch("http://localhost:5678/api/works", {
+                    method: "POST",
+                    headers: { Authorization: `Bearer ${token}` },
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Erreur : ${errorData.message || "Impossible d'ajouter le travail."}`);
+                    return;
+                }
+
+                const newWork = await response.json();
+                works.push(newWork);
+                genererPortfolio(works);
+
+                // Fermer le modal
+                const modal = document.querySelector(".modal");
+                if (modal) { modal.remove(); }
+            } catch (error) {
+                console.error("Erreur lors de l'ajout de l'œuvre :", error);
+                alert("Une erreur est survenue lors de l'ajout. Veuillez réessayer.");
+            }
+        });
+    } catch (error) {
+        console.error("Erreur lors de l'exécution de la fonction addWorks :", error);
+        alert("Une erreur s'est produite. Veuillez réessayer.");
+    }
 }
 
 
