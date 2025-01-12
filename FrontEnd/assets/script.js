@@ -177,6 +177,8 @@ function createModal(works) {
     addButton.textContent = "Ajouter une photo";
     modalContent.appendChild(addButton);
 
+    
+    
     // Créer la page pour ajouter une photo
     const addPhotoPage = document.createElement("div");
     addPhotoPage.classList.add("add-photo-page");

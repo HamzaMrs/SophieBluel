@@ -8,11 +8,6 @@ async function connexion(event) {
         alert("Veuillez entrer une adresse email valide.");
         return;
     }
-    // Vérification des identifiants spécifiques
-    if (email !== "sophie.bluel@test.tld" || password !== "S0phie") {
-        alert("Identifiant ou mot de passe incorrect.");
-        return;
-    }
     const body = JSON.stringify({ email, password });
     try {
         const response = await fetch("http://localhost:5678/api/users/login", {
@@ -20,9 +15,15 @@ async function connexion(event) {
             headers: { "Content-Type": "application/json" },
             body: body
         });
-        // Vérifie si la réponse est une erreur
+        if (response.status === 404 || response.status === 401) {
+            alert("Identifiant ou mot de passe incorrect.");
+            return;
+        }
         if (!response.ok) {
-            throw new Error("Erreur de connexion, veuillez vérifier vos identifiants.");
+            // Autres erreurs serveur
+            console.error("Erreur serveur.");
+            alert("Erreur de connexion, veuillez réessayer.");
+            return;
         }
         const data = await response.json();
         // Stockage sécurisé dans le localStorage (pas de mot de passe ni d'email)
